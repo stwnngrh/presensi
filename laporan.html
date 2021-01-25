@@ -60,9 +60,13 @@
           <th style="width: 30%">Presensi</th>
         </tr>
       </table>
+      <div id="box1"></div>
     </div>
+    <script src="Assets/js/button.js"></script>
     <script>
+      const jamPelajaran = (z) => mapel.buatTombol.call(z);
       cekNupd();
+      jamPelajaran(loading);
 
       function cekNupd() {
         let x = sessionStorage.getItem("nupd");
@@ -95,6 +99,7 @@
               let panjangData = Object.keys(result);
               console.log(panjangData);
               let batasAtas = panjangData.length - 3;
+              document.getElementById("ld").remove();
 
               for (i = 1; i <= batasAtas; i++) {
                 let kunci = panjangData[i];
