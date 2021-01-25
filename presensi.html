@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link
+      rel="icon"
+      href="Assets/img/favicon.ico"
+      type="image/ico"
+      sizes="16x16"
+    />
+    <link rel="stylesheet" href="Assets/css/style.css" />
+    <link rel="stylesheet" href="Assets/css/bootstrap.min.css" />
+    <script src="Assets/js/bootstrap.min.js"></script>
+    <script src="Assets/js/moment.js"></script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="index.html"
+          ><strong>SMK N Matesih</strong>
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNavAltMarkup"
+          aria-controls="navbarNavAltMarkup"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a class="nav-link" href="index.html">Home</a>
+            <a class="nav-link active" aria-current="page" href="#">Presensi</a>
+            <a class="nav-link" href="laporan.html">Laporan</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <div class="container mt-4 mx-auto" id="box">
+      <h2>Data Siswa</h2>
+      <label>NUPD : </label><label id="dsNupd"> -</label><br />
+      <label>Nama : </label><label id="dsNama"> -</label><br />
+      <label>No Absen : </label><label id="dsNo"> -</label><br />
+      <label>Kelas : </label><label id="dsKelas"> -</label><br />
+      <hr />
+    </div>
+
+    <div class="container mt-5 mx-auto">
+      <h2>Presensi</h2>
+      <div id="box1"></div>
+      <hr />
+    </div>
+
+    <script src="Assets/js/button.js"></script>
+    <script>
+      const jamPelajaran = (z) => mapel.buatTombol.call(z);
+      const waktu = new Date();
+
+      cekNupd();
+      jamPelajaran(loading);
+
+      function kirim(k) {
+        let x = sessionStorage.getItem("nupd");
+        let y = (waktu / 1000).toFixed(0);
+        let dataJson = `{"id":${x},"timestamp":"${y}","mapel":"${k}"}`;
+
+        let xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            let result = JSON.parse(this.responseText).data;
+            console.log(result);
+            alert("Terima Kasih Sudah Melakukan Presensi");
+            window.location.assign("laporan.html");
+          }
+        };
+        xhttp.open(
+          "GET",
+          `https://script.google.com/macros/s/AKfycbyO0ufKga-f9bI5lkUZcqhZ-i4jPE4nAOBzNvJ9KkM-BUVJ2qg/exec?action=insert&table=presensiHarian&data=${dataJson}`,
+          true
+        );
+        xhttp.setRequestHeader(
+          "Content-Type",
+          "application/x-www-form-urlencoded"
+        );
+        xhttp.send();
+      }
+
+      //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+      function cekNupd() {
+        let x = sessionStorage.getItem("nupd");
+        let result;
+        if (!x) {
+          alert("Silahkan mengisi NUPD");
+          window.location.assign("index.html");
+        } else {
+          let xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+              result = JSON.parse(this.responseText).data;
+              console.log(result);
+              document.getElementById("dsNupd").innerHTML = result.id;
+              document.getElementById("dsNama").innerHTML = result.nama;
+              document.getElementById("dsNo").innerHTML = result.absen;
+              document.getElementById("dsKelas").innerHTML = result.kelas;
+
+              loadButton();
+            }
+          };
+          xhttp.open(
+            "GET",
+            "https://script.google.com/macros/s/AKfycbyO0ufKga-f9bI5lkUZcqhZ-i4jPE4nAOBzNvJ9KkM-BUVJ2qg/exec?action=read&table=dataSiswa&id=" +
+              x,
+            true
+          );
+          xhttp.setRequestHeader(
+            "Content-Type",
+            "application/x-www-form-urlencoded"
+          );
+          xhttp.send();
+        }
+      }
+
+      //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+      function loadButton() {
+        let nupd = Number(sessionStorage.getItem("nupd").substring(0, 4));
+        document.getElementById("ld").remove();
+        switch (new Date().getDay()) {
+          case 0:
+            console.log("Sunday");
+            jamPelajaran(libur);
+            break;
+
+          case 1:
+            console.log("Monday");
+            switch (nupd) {
+              case 1813:
+                jamPelajaran(belumWaktu);
+                if (waktu >= loadJam(7)) {
+                  document.getElementById("bw").remove();
+                  jamPelajaran(dmi);
+                }
+                break;
+              case 1814:
+                jamPelajaran(kosongDmi);
+                break;
+              case 2013:
+                jamPelajaran(kosongPd);
+                break;
+              case 2014:
+                jamPelajaran(kosongPd);
+                break;
+              default:
+                jamPelajaran(nupdTakValid);
+            }
+            break;
+
+          case 2:
+            console.log("Tuesday");
+            switch (nupd) {
+              case 1813:
+                jamPelajaran(kosongDmi);
+                break;
+              case 1814:
+                jamPelajaran(kosongDmi);
+                break;
+              case 2013:
+                jamPelajaran(belumWaktu);
+                if (waktu >= loadJam(1)) {
+                  document.getElementById("bw").remove();
+                  jamPelajaran(pd);
+                }
+                break;
+              case 2014:
+                jamPelajaran(kosongPd);
+                break;
+              default:
+                jamPelajaran(nupdTakValid);
+            }
+            break;
+
+          case 3:
+            console.log("Wednesday");
+            console.log(nupd);
+            switch (nupd) {
+              case 1813:
+                jamPelajaran(belumWaktu);
+                if (waktu >= loadJam(1)) {
+                  document.getElementById("bw").remove();
+                  jamPelajaran(dmi);
+                }
+                break;
+              case 1814:
+                jamPelajaran(belumWaktu);
+                if (waktu >= loadJam(7)) {
+                  jamPelajaran(dmi);
+                }
+                break;
+              case 2013:
+                jamPelajaran(kosongPd);
+                break;
+              case 2014:
+                jamPelajaran(kosongPd);
+                break;
+              default:
+                jamPelajaran(nupdTakValid);
+            }
+            break;
+
+          case 4:
+            console.log("Thursday");
+            switch (nupd) {
+              case 1813:
+                jamPelajaran(kosongDmi);
+                break;
+              case 1814:
+                jamPelajaran(belumWaktu);
+                if (waktu >= loadJam(3)) {
+                  document.getElementById("bw").remove();
+                  jamPelajaran(dmi);
+                }
+                break;
+              case 2013:
+                jamPelajaran(kosongPd);
+                break;
+              case 2014:
+                jamPelajaran(belumWaktu);
+                if (waktu >= loadJam(8)) {
+                  document.getElementById("bw").remove();
+                  jamPelajaran(pd);
+                }
+                break;
+              default:
+                jamPelajaran(nupdTakValid);
+            }
+            break;
+
+          case 5:
+            console.log("Friday");
+            switch (nupd) {
+              case 1813:
+                jamPelajaran(belumWaktu);
+                if (waktu >= loadJam(2)) {
+                  document.getElementById("bw").remove();
+                  jamPelajaran(dmi);
+                }
+                break;
+              case 1814:
+                jamPelajaran(belumWaktu);
+                if (waktu >= loadJam(7)) {
+                  document.getElementById("bw").remove();
+                  jamPelajaran(dmi);
+                }
+                break;
+              case 2013:
+                jamPelajaran(kosongPd);
+                break;
+              case 2014:
+                jamPelajaran(kosongPd);
+                break;
+              default:
+                jamPelajaran(nupdTakValid);
+            }
+            break;
+
+          case 6:
+            console.log("Saturday");
+            jamPelajaran(libur);
+        }
+      }
+    </script>
+  </body>
+</html>

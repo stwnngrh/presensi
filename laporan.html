@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link
+      rel="icon"
+      href="Assets/img/favicon.ico"
+      type="image/ico"
+      sizes="16x16"
+    />
+    <link rel="stylesheet" href="Assets/css/style.css" />
+    <link rel="stylesheet" href="Assets/css/bootstrap.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
+    />
+    <script src="Assets/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js"></script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="index.html"
+          ><strong>SMK N Matesih</strong>
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNavAltMarkup"
+          aria-controls="navbarNavAltMarkup"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a class="nav-link" href="index.html">Home</a>
+            <a class="nav-link" href="presensi.html">Presensi</a>
+            <a class="nav-link active" aria-current="page" href="#">Laporan</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-5">
+      <table
+        class="table table-striped table-hover"
+        style="text-align: center"
+        id="tabelRekap"
+      >
+        <tr>
+          <th style="width: 10%">No</th>
+          <th style="width: 30%">Tanggal</th>
+          <th style="width: 30%">Mata Pelajaran</th>
+          <th style="width: 30%">Presensi</th>
+        </tr>
+      </table>
+    </div>
+    <script>
+      cekNupd();
+
+      function cekNupd() {
+        let x = sessionStorage.getItem("nupd");
+        let y = Number(x.substring(0, 4));
+        let mapel = "Produktif";
+        switch (y) {
+          case 1813:
+            mapel = "Desain Media Interaktif";
+            break;
+          case 1814:
+            mapel = "Desain Media Interaktif";
+            break;
+          case 2013:
+            mapel = "Pemrograman Dasar";
+            break;
+          case 2014:
+            mapel = "Pemrograman Dasar";
+            break;
+        }
+
+        if (!x) {
+          alert("Silahkan mengisi NUPD");
+          window.location.assign("index.html");
+        } else {
+          let xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+              let result = JSON.parse(this.responseText).data;
+              console.log(result);
+              let panjangData = Object.keys(result);
+              console.log(panjangData);
+              let batasAtas = panjangData.length - 3;
+
+              for (i = 1; i <= batasAtas; i++) {
+                let kunci = panjangData[i];
+                let simbol = "fas fa-adjust";
+
+                if (result[kunci] == "A") {
+                  simbol = "fa fa-fw fa-ban text-danger";
+                } else if (result[kunci] == ".") {
+                  simbol = "fa fa-fw fa-check-circle text-success";
+                }
+
+                let tabelRow = document.createElement("tr");
+                let td1 = document.createElement("td");
+                let text1 = document.createTextNode(i);
+                td1.appendChild(text1);
+                tabelRow.appendChild(td1);
+                let td2 = document.createElement("td");
+                let text2 = document.createTextNode(panjangData[i]);
+                td2.appendChild(text2);
+                tabelRow.appendChild(td2);
+                let td3 = document.createElement("td");
+                let text3 = document.createTextNode(mapel);
+                td3.appendChild(text3);
+                tabelRow.appendChild(td3);
+                let td4 = document.createElement("td");
+                let fa = document.createElement("i");
+                let atoc = document.createAttribute("class");
+                atoc.value = simbol;
+
+                fa.setAttributeNode(atoc);
+                td4.appendChild(fa);
+                tabelRow.appendChild(td4);
+                let tabel = document.getElementById("tabelRekap");
+
+                tabel.appendChild(tabelRow);
+              }
+            }
+          };
+          xhttp.open(
+            "GET",
+            `https://script.google.com/macros/s/AKfycbyO0ufKga-f9bI5lkUZcqhZ-i4jPE4nAOBzNvJ9KkM-BUVJ2qg/exec?action=read&table=rekapAbsen${y}&id=` +
+              x,
+            true
+          );
+          xhttp.setRequestHeader(
+            "Content-Type",
+            "application/x-www-form-urlencoded"
+          );
+          xhttp.send();
+        }
+      }
+    </script>
+  </body>
+</html>

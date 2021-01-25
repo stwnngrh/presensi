@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+    <link
+      rel="icon"
+      href="Assets/img/favicon.ico"
+      type="image/ico"
+      sizes="16x16"
+    />
+    <link rel="stylesheet" href="Assets/css/style.css" />
+    <link rel="stylesheet" href="Assets/css/bootstrap.min.css" />
+    <script src="Assets/js/bootstrap.min.js"></script>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#"><strong>SMK N Matesih</strong> </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNavAltMarkup"
+          aria-controls="navbarNavAltMarkup"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a class="nav-link active" aria-current="page" href="#">Home</a>
+            <a class="nav-link" href="#" onclick="validasi()">Presensi</a>
+            <a class="nav-link" href="#" onclick="validasi()">Laporan</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <div class="jumbotron">
+      <div class="container">
+        <div class="login">
+          <h2>Hai Siswa-Siswi SMK N Matesih</h2>
+          <p>
+            Silahkan memasukan Nomor Unik Peserta Didik yang sudah dibagikan.
+            Jika ada kendala pada website ini, hubungi wali kelas kalian
+            masing-masing dengan melampirkan screenshoot dan berikan penjelasan
+            secara rinci.
+          </p>
+
+          <input
+            class="form-control mr-sm-2 mt-3"
+            type="search"
+            placeholder="Nomor Unik Peserta Didik"
+            id="nupd"
+          />
+          <button
+            class="btn btn btn-success mt-2"
+            type="submit"
+            onclick="newDoc()"
+          >
+            Masuk
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function newDoc() {
+        let x, text;
+        x = document.getElementById("nupd").value;
+        if (isNaN(x) || x.length < 9) {
+          alert("NUPD berisi 9 karakter angka");
+        } else {
+          sessionStorage.setItem("nupd", x);
+          window.location.assign("presensi.html");
+        }
+      }
+
+      function validasi() {
+        let x = sessionStorage.getItem("nupd");
+        if (!x) {
+          alert("Silahkan mengisi NUPD");
+        } else {
+          window.location.assign("presensi.html");
+        }
+      }
+    </script>
+  </body>
+</html>

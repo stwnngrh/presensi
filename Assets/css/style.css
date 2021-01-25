@@ -1,0 +1,12 @@
+/* .navbar {
+  background-color: aqua;
+} */
+
+.jumbotron {
+  background-image: url("../img/bg-home.jpg");
+  background-size: cover;
+}
+.jumbotron .login {
+  color: antiquewhite;
+  padding: 50px 2px 50px 2px;
+}
